@@ -22,6 +22,7 @@ export default async function handler(
     req.body;
   try {
     const serviceAccountPath = path.resolve("./public/service.json");
+    console.log(serviceAccountPath, process.env.NODE_ENV)
     const admin2 =
       admin.apps.length > 0
         ? admin.app("admin")
