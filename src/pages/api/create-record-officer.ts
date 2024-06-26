@@ -22,18 +22,14 @@ export default async function handler(
     req.body;
   try {
     const serviceAccountPath = path.resolve("./public/service.json");
-    console.log(serviceAccountPath, process.env.NODE_ENV)
+    console.log(serviceAccountPath, process.env);
     const admin2 =
       admin.apps.length > 0
         ? admin.app("admin")
         : admin.initializeApp(
             {
               // TODO: don't put this in production level code
-              credential: admin.credential.cert(
-                process.env.NODE_ENV === "development"
-                  ? "./public/service.json"
-                  : serviceAccountPath
-              ),
+              credential: admin.credential.cert(serviceAccountPath),
             },
             "admin"
           );
