@@ -1,0 +1,4 @@
+export enum COLLECTION {
+    USER="USER",
+    APPLICATION="APPLICATION"
+}
