@@ -40,7 +40,9 @@ export default async function handler(
         : admin.initializeApp(
             {
               // TODO: don't put this in production level code
-              credential: admin.credential.cert(serviceAccountPath),
+              credential: admin.credential.cert({projectId: process.env.projectId,
+                clientEmail: process.env.clientEmail,
+                privateKey: process.env.privateKey,}),
             },
             "admin"
           );
