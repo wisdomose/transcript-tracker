@@ -21,20 +21,15 @@ export default async function handler(
   const { email = "recordofficer@aju.com", displayName = "Record officer" } =
     req.body;
   try {
-    // const serviceAccountPath = path.resolve("https://transcript-tracker.vercel.app/public/service.json");
-    console.log(
-      "https://transcript-tracker.vercel.app/service.json",
-      process.env.NODE_ENV
-    );
+    const serviceAccountPath = path.resolve("/public/service.json");
+    console.log(serviceAccountPath, process.env);
     const admin2 =
       admin.apps.length > 0
         ? admin.app("admin")
         : admin.initializeApp(
             {
               // TODO: don't put this in production level code
-              credential: admin.credential.cert(
-                "https://transcript-tracker.vercel.app/service.json"
-              ),
+              credential: admin.credential.cert(serviceAccountPath),
             },
             "admin"
           );
