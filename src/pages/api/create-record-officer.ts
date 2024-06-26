@@ -21,8 +21,8 @@ export default async function handler(
   const { email = "recordofficer@aju.com", displayName = "Record officer" } =
     req.body;
   try {
-    const serviceAccountPath = path.resolve("/public/service.json");
-    console.log(serviceAccountPath, process.env);
+    const serviceAccountPath = path.resolve("./public/service.json");
+    console.log(serviceAccountPath);
     const admin2 =
       admin.apps.length > 0
         ? admin.app("admin")
