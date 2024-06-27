@@ -14,7 +14,7 @@ export default function SignupPage() {
   const { wrapper, data, loading, error } = useFetcher<SignUpResponse>(null);
   const [fname, fnameOpts] = useInput("");
   const [lname, lnameOpts] = useInput("");
-  const [sex, sexOpts, setSex] = useInput("");
+  const [sex, sexOpts, setSex] = useInput("male");
   const [dob, dobOpts] = useInput("");
   const [trackNo, trackNoOpts] = useInput("");
   const [faculty, facultyOpts] = useInput("");
