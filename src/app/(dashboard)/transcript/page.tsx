@@ -8,6 +8,7 @@ import { Field, Input, Label, Select } from "@headlessui/react";
 import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useParams, useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { FiPlus, FiSave, FiX } from "react-icons/fi";
@@ -80,35 +81,28 @@ const gradingSystem = [
   },
 ];
 
-export default function TranscriptPage(props: {
-  params: {};
-  searchParams: {
-    q?: string;
-  };
-}) {
+export default function TranscriptPage() {
   const defaultResult = {
     code: "",
     title: "",
     unit: 0,
     grade: 0,
   };
-
+  const searchParams = useSearchParams();
   const [application, setApplication] = useState<Application | null>(null);
   const [session, setSession] = useState("");
   const [semester, setSemester] = useState("1st");
   const router = useRouter();
   const { wrapper, data, loading, error } = useFetcher<boolean>(null);
   const findFetcher = useFetcher<Application>(null);
-  const params = useParams();
 
   useEffect(() => {
-    console.log({ q: props.searchParams.q }, params);
-    if (!props.searchParams.q) return;
+    if (!searchParams?.get("q")) return;
     const applicationService = new ApplicationService();
     findFetcher.wrapper(() =>
-      applicationService.findOne(props.searchParams.q!)
+      applicationService.findOne(searchParams.get("q")!)
     );
-  }, [props.searchParams.q]);
+  }, [searchParams?.get("q")]);
 
   useEffect(() => {
     if (data) {
