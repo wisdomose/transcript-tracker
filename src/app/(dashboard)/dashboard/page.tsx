@@ -79,7 +79,7 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <main className="px-24 pb-24 pt-12 max-w-7xl mx-auto">
+    <main className="px-5 py-10  md:px-24 md:pb-24 md:pt-12 max-w-7xl mx-auto">
       <div className="flex justify-between gap-4 mb-12">
         <Link href="/" className="w-fit block">
           <Image

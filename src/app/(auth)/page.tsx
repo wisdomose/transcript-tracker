@@ -37,7 +37,7 @@ export default function Home() {
   }, [error]);
 
   return (
-    <main className="p-24">
+    <main className="p-5 py-10 md:p-24 md:py-24">
       <Link href="/">
         <Image
           src="/logo.png"
