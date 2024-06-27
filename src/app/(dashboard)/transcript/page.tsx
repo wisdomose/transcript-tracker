@@ -101,6 +101,7 @@ export default function TranscriptPage(props: {
   const findFetcher = useFetcher<Application>(null);
 
   useEffect(() => {
+    console.log({ q: props.searchParams.q }, "use effect");
     if (!props.searchParams.q) return;
     const applicationService = new ApplicationService();
     findFetcher.wrapper(() =>
