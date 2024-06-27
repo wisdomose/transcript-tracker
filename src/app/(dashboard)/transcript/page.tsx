@@ -279,7 +279,12 @@ export default function TranscriptPage() {
       (system) => gpa >= system.classMin && gpa <= system.classMax
     );
 
-    return { grade, sumUnit, sumGP, gpa: gpa.toPrecision(3) };
+    return {
+      grade,
+      sumUnit,
+      sumGP,
+      gpa: Number.isNaN(gpa) ? 0 : gpa.toPrecision(3),
+    };
   }
 
   async function saveHandler() {
@@ -613,11 +618,11 @@ export default function TranscriptPage() {
               <td className="text-left px-2 border-black border-x">
                 {findGrade(application)?.sumUnit}
               </td>
-              <td className="text-left border-black border-r relative">
+              <td className="text-left px-2 border-black border-r relative">
                 {findGrade(application)?.sumGP}
               </td>
 
-              <td className="text-left relative border-black border-r">
+              <td className="text-left px-2 relative border-black border-r">
                 {findGrade(application)?.gpa}
               </td>
             </tr>
