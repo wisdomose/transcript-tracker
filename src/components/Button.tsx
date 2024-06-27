@@ -1,3 +1,5 @@
+import { overrideTailwindClasses } from "tailwind-override";
+
 type Props = {
   label: string;
   type?: "button" | "submit";
@@ -8,6 +10,7 @@ type Props = {
   loading?: boolean;
   disabled?: boolean;
   onClick?: () => void;
+  className?: string;
 };
 
 export default function Button({
@@ -20,6 +23,7 @@ export default function Button({
   onClick,
   loading = false,
   disabled = false,
+  className: cn = "",
 }: Props) {
   const className = (function () {
     let className = "relative  rounded py-2 px-5 text-sm cursor-pointer";
@@ -29,7 +33,7 @@ export default function Button({
       ? " bg-red-500 focus:bg-red-700 hover:bg-red-700"
       : " bg-primary focus:bg-primary-accent hover:bg-primary-accent";
 
-    return className;
+    return overrideTailwindClasses(`${className} ${cn}`);
   })();
 
   return (

@@ -6,7 +6,6 @@ import UserService, { LoginResponse } from "@/services/User";
 import { Field, Input, Label } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { FormEvent, useEffect } from "react";
 import { FiUnlock } from "react-icons/fi";
 import { toast } from "react-toastify";
@@ -15,7 +14,6 @@ export default function Home() {
   const { wrapper, data, loading, error } = useFetcher<LoginResponse>(null);
   const [email, emailOpts] = useInput("");
   const [password, passwordOpts] = useInput("");
-  const router = useRouter();
 
   const login = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,8 +23,8 @@ export default function Home() {
 
   useEffect(() => {
     if (data) {
-      router.replace("/dashboard");
-      toast.success("Login sucessful")
+      window.location.href = "/dashboard";
+      toast.success("Login sucessful");
     }
   }, [data]);
 

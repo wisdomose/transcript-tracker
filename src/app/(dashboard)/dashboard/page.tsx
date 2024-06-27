@@ -79,8 +79,8 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <main className="px-5 py-10  md:px-24 md:pb-24 md:pt-12 max-w-7xl mx-auto">
-      <div className="flex justify-between gap-4 mb-12">
+    <main className="px-5 py-10 md:px-12 lg:px-24 md:pb-24 md:pt-12 max-w-7xl mx-auto">
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-4 mb-12">
         <Link href="/" className="w-fit block">
           <Image
             src="/logo.png"
@@ -92,17 +92,18 @@ export default function DashboardPage() {
           />
         </Link>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center max-md:justify-end gap-4 flex-wrap">
           {user?.role === ROLES["STUDENT"] && (
             <Button
               label="Apply for your transcript"
               onClick={() => setIsOpen(true)}
+              className="w-full md:w-fit"
             />
           )}
           <SignOut />
 
           <div className="flex items-center gap-2">
-            <FiUser className="size-4" />
+            <FiUser className="size-4 shrink-0" />
             <p className="text-sm">{user?.displayName}</p>
 
             {/* <p className="rounded-full px-4 py-1 text-xs font-bold text-blue-700 bg-blue-100">
@@ -196,73 +197,81 @@ export default function DashboardPage() {
               : "No applications at the moment"}
           </p>
         ) : findAllFetcher.data.length > 0 ? (
-          <table className="w-full table-auto mt-10">
-            <thead>
-              <tr className="">
-                <th className="py-2 text-left pl-2">Application date</th>
-                <th className="py-2 text-left">Faculty</th>
-                <th className="py-2 text-left">Department</th>
-                <th className="py-2 text-left">Status</th>
-                <th className="py-2 text-left">Delivery format</th>
-                <th className="py-2 text-right pr-2"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {findAllFetcher.data.map(({ status, ...entry }) => (
-                <tr key={entry.id} className="odd:bg-blue-50/50">
-                  <td className="text-left py-2 pl-2">
-                    {moment(new Date(entry.timestamp.toDate())).format(
-                      "Do MMMM, YYYY"
-                    )}
-                  </td>
-                  <td className="text-left py-2">{entry.faculty}</td>
-                  <td className="text-left py-2">{entry.department}</td>
-                  <td className="text-left py-2">
-                    <Popover className="group">
-                      <div className="flex gap-1">
-                        {status === APPLICATION_STATUS["ERROR"] &&
-                        user?.role === ROLES["STUDENT"]
-                          ? "INPROGRESS"
-                          : status}
-                        <PopoverButton className="flex items-center gap-2 mb-2 outline-none hover:text-accent">
-                          <FiInfo className="size-3" />
-                        </PopoverButton>
-                      </div>
-                      <PopoverPanel
-                        anchor="top"
-                        className="!max-w-[20ch] text-xs bg-gray-100 p-2 rounded"
-                      >
-                        {status === APPLICATION_STATUS["ERROR"] &&
-                        user?.role === ROLES["STUDENT"]
-                          ? "Your application is being worked on"
-                          : status === APPLICATION_STATUS["ERROR"]
-                          ? entry.errorDesc ?? desc[status]
-                          : desc[status]}
-                      </PopoverPanel>
-                    </Popover>
-                  </td>
-                  <td className="text-left py-2">
-                    {entry.isSoftCopy ? "softcopy" : "hardcopy"}
-                  </td>
-                  <td className="text-right py-2 pr-2">
-                    {status === APPLICATION_STATUS["PENDING"] ? (
-                      <Confirm application={{ status, ...entry }} />
-                    ) : status === APPLICATION_STATUS["CONFIRMED"] &&
-                      user?.role === ROLES["RECORD_OFFICER"] ? (
-                      <Link href={`/transcript?q=${entry.id}`}>data entry</Link>
-                    ) : status === APPLICATION_STATUS["FILLED"] ? (
-                      <Approve application={{ status, ...entry }} />
-                    ) : status === APPLICATION_STATUS["APPROVED"] ? (
-                      <Send application={{ status, ...entry }} />
-                    ) : status === APPLICATION_STATUS["ERROR"] &&
-                      user?.role === ROLES["RECORD_OFFICER"] ? (
-                      <Link href={`/transcript?q=${entry.id}`}>{status === APPLICATION_STATUS["ERROR"] ? "fix up":"data entry"}</Link>
-                    ) : null}
-                  </td>
+          <div className="overflow-auto">
+            <table className="w-full table-auto mt-10">
+              <thead>
+                <tr className="">
+                  <th className="py-2 text-left px-2 whitespace-nowrap">Application date</th>
+                  <th className="py-2 px-2 text-left">Faculty</th>
+                  <th className="py-2 px-2 text-left">Department</th>
+                  <th className="py-2 px-2 text-left">Status</th>
+                  <th className="py-2 px-2 text-left whitespace-nowrap">Delivery format</th>
+                  <th className="py-2 text-right pr-2"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {findAllFetcher.data.map(({ status, ...entry }) => (
+                  <tr key={entry.id} className="odd:bg-blue-50/50">
+                    <td className="text-left py-2 px-2 whitespace-nowrap">
+                      {moment(new Date(entry.timestamp.toDate())).format(
+                        "Do MMMM, YYYY"
+                      )}
+                    </td>
+                    <td className="text-left py-2 px-2">{entry.faculty}</td>
+                    <td className="text-left py-2 px-2">{entry.department}</td>
+                    <td className="text-left py-2 px-2">
+                      <Popover className="group">
+                        <div className="flex gap-1">
+                          {status === APPLICATION_STATUS["ERROR"] &&
+                          user?.role === ROLES["STUDENT"]
+                            ? "INPROGRESS"
+                            : status}
+                          <PopoverButton className="flex items-center gap-2 mb-2 outline-none hover:text-accent">
+                            <FiInfo className="size-3" />
+                          </PopoverButton>
+                        </div>
+                        <PopoverPanel
+                          anchor="top"
+                          className="!max-w-[20ch] text-xs bg-gray-100 p-2 rounded"
+                        >
+                          {status === APPLICATION_STATUS["ERROR"] &&
+                          user?.role === ROLES["STUDENT"]
+                            ? "Your application is being worked on"
+                            : status === APPLICATION_STATUS["ERROR"]
+                            ? entry.errorDesc ?? desc[status]
+                            : desc[status]}
+                        </PopoverPanel>
+                      </Popover>
+                    </td>
+                    <td className="text-left py-2 px-2">
+                      {entry.isSoftCopy ? "softcopy" : "hardcopy"}
+                    </td>
+                    <td className="text-right py-2 pr-2">
+                      {status === APPLICATION_STATUS["PENDING"] ? (
+                        <Confirm application={{ status, ...entry }} />
+                      ) : status === APPLICATION_STATUS["CONFIRMED"] &&
+                        user?.role === ROLES["RECORD_OFFICER"] ? (
+                        <Link href={`/transcript?q=${entry.id}`}>
+                          data entry
+                        </Link>
+                      ) : status === APPLICATION_STATUS["FILLED"] ? (
+                        <Approve application={{ status, ...entry }} />
+                      ) : status === APPLICATION_STATUS["APPROVED"] ? (
+                        <Send application={{ status, ...entry }} />
+                      ) : status === APPLICATION_STATUS["ERROR"] &&
+                        user?.role === ROLES["RECORD_OFFICER"] ? (
+                        <Link href={`/transcript?q=${entry.id}`}>
+                          {status === APPLICATION_STATUS["ERROR"]
+                            ? "fix up"
+                            : "data entry"}
+                        </Link>
+                      ) : null}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : null}
       </div>
     </main>
