@@ -276,6 +276,14 @@ export function Send({ application }: { application: Application }) {
     await actionHandler();
   };
 
+  async function downloadURI(uri: string | null, name: string) {
+    if (!uri) return;
+    const link = document.createElement("a");
+    link.href = uri;
+    link.download = name;
+    link.click();
+  }
+
   useEffect(() => {
     const userService = new UserService();
     signageFetcher.wrapper(() => userService.signage());
@@ -341,31 +349,41 @@ export function Send({ application }: { application: Application }) {
               <>loading...</>
             ) : signageFetcher.data ? (
               <div>
-                <PDFDownloadLink
+                <BlobProvider
                   document={
                     <PDF
                       application={application}
                       signage={signageFetcher.data}
                     />
                   }
-                  fileName={application.track_no + "-" + application.name}
-                  className="flex items-center gap-2 relative bg-primary focus:bg-primary-accent hover:bg-primary-accent rounded py-2 px-5 text-sm cursor-pointer w-fit text-white mx-auto"
                 >
                   {(params) => (
                     <>
                       {params.error ? (
                         <>an error occured</>
                       ) : (
-                        <>
+                        <button
+                          className="flex items-center gap-2 relative bg-primary focus:bg-primary-accent hover:bg-primary-accent rounded py-2 px-5 text-sm cursor-pointer w-fit text-white mx-auto"
+                          onClick={async () => {
+                            await downloadURI(
+                              params.url,
+                              application.track_no +
+                                "-" +
+                                application.name +
+                                "-approved"
+                            );
+                            actionHandler();
+                          }}
+                        >
                           <FiDownload />
                           {params.loading
                             ? "Loading..."
                             : "Download transcript"}
-                        </>
+                        </button>
                       )}
                     </>
                   )}
-                </PDFDownloadLink>
+                </BlobProvider>
               </div>
             ) : (
               <p></p>
