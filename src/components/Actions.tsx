@@ -16,7 +16,7 @@ import ApplicationService from "@/services/Application";
 import Button from "@/components/Button";
 import { APPLICATION_STATUS, Application, ROLES } from "@/types";
 import { useStore } from "@/store/user";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import { BlobProvider, PDFDownloadLink } from "@react-pdf/renderer";
 import PDF from "./PDF";
 import useInput from "@/hooks/useInput";
 
@@ -33,7 +33,7 @@ export function Approve({ application }: { application: Application }) {
     if (!isOpen) {
       setHasError(false);
       setDownloaded(false);
-      setErrorDesc("")
+      setErrorDesc("");
     }
   }, [isOpen]);
 
@@ -58,6 +58,14 @@ export function Approve({ application }: { application: Application }) {
       })
     );
   };
+
+  async function downloadURI(uri: Blob | null, name: string) {
+    if(!uri) return;
+    const link = document.createElement("a");
+    link.href = await uri.text();
+    link.download = name;
+    link.click();
+  }
 
   useEffect(() => {
     if (data) {
@@ -120,7 +128,12 @@ export function Approve({ application }: { application: Application }) {
                         onChange={(e) => setErrorDesc(e.target.value)}
                       ></Textarea>
                     </Field>
-                    <Button type="submit" label="Submit" block loading={loading} />
+                    <Button
+                      type="submit"
+                      label="Submit"
+                      block
+                      loading={loading}
+                    />
                   </form>
                 ) : (
                   <div className="flex flex-col gap-4 items-center justify-center">
@@ -141,27 +154,31 @@ export function Approve({ application }: { application: Application }) {
               </>
             ) : (
               <div>
-                <PDFDownloadLink
-                  document={<PDF application={application} />}
-                  fileName={application.track_no + "-" + application.name}
-                  className="flex items-center gap-2 relative bg-primary focus:bg-primary-accent hover:bg-primary-accent rounded py-2 px-5 text-sm cursor-pointer w-fit text-white mx-auto"
-                  onClick={() => setDownloaded(true)}
-                >
+                <BlobProvider document={<PDF application={application} />}>
                   {(params) => (
                     <>
                       {params.error ? (
                         <>an error occured</>
                       ) : (
-                        <>
+                        <button
+                          className="flex items-center gap-2 relative bg-primary focus:bg-primary-accent hover:bg-primary-accent rounded py-2 px-5 text-sm cursor-pointer w-fit text-white mx-auto"
+                          onClick={() => {
+                            downloadURI(
+                              params.blob,
+                              application.track_no + "-" + application.name
+                            );
+                            setDownloaded(true);
+                          }}
+                        >
                           <FiDownload />
                           {params.loading
                             ? "Loading..."
                             : "Download transcript"}
-                        </>
+                        </button>
                       )}
                     </>
                   )}
-                </PDFDownloadLink>
+                </BlobProvider>
               </div>
             )}
           </DialogPanel>
