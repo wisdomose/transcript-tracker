@@ -8,7 +8,7 @@ import { Field, Input, Label, Select } from "@headlessui/react";
 import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { FiPlus, FiSave, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
@@ -99,9 +99,10 @@ export default function TranscriptPage(props: {
   const router = useRouter();
   const { wrapper, data, loading, error } = useFetcher<boolean>(null);
   const findFetcher = useFetcher<Application>(null);
+  const params = useParams();
 
   useEffect(() => {
-    console.log({ q: props.searchParams.q }, "use effect");
+    console.log({ q: props.searchParams.q }, params);
     if (!props.searchParams.q) return;
     const applicationService = new ApplicationService();
     findFetcher.wrapper(() =>
