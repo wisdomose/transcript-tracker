@@ -19,6 +19,7 @@ import { useStore } from "@/store/user";
 import { BlobProvider, PDFDownloadLink } from "@react-pdf/renderer";
 import PDF from "./PDF";
 import useInput from "@/hooks/useInput";
+import UserService, { SignageResponse } from "@/services/User";
 
 export function Approve({ application }: { application: Application }) {
   const status: APPLICATION_STATUS = APPLICATION_STATUS["APPROVED"];
@@ -60,7 +61,7 @@ export function Approve({ application }: { application: Application }) {
   };
 
   async function downloadURI(uri: string | null, name: string) {
-    if(!uri) return;
+    if (!uri) return;
     const link = document.createElement("a");
     link.href = uri;
     link.download = name;
@@ -258,6 +259,7 @@ export function Send({ application }: { application: Application }) {
   const [email, emailOpts] = useInput("");
   const [isOpen, setIsOpen] = useState(false);
   const { wrapper, data, loading, error } = useFetcher<boolean>(null);
+  const signageFetcher = useFetcher<SignageResponse>(null);
 
   const actionHandler = async () => {
     const applicationService = new ApplicationService();
@@ -273,6 +275,11 @@ export function Send({ application }: { application: Application }) {
     e.preventDefault();
     await actionHandler();
   };
+
+  useEffect(() => {
+    const userService = new UserService();
+    signageFetcher.wrapper(() => userService.signage());
+  }, []);
 
   useEffect(() => {
     if (data) {
@@ -330,10 +337,17 @@ export function Send({ application }: { application: Application }) {
 
                 <Button label="Send" type="submit" loading={loading} block />
               </form>
-            ) : (
+            ) : signageFetcher.loading ? (
+              <>loading...</>
+            ) : signageFetcher.data ? (
               <div>
                 <PDFDownloadLink
-                  document={<PDF application={application} />}
+                  document={
+                    <PDF
+                      application={application}
+                      signage={signageFetcher.data}
+                    />
+                  }
                   fileName={application.track_no + "-" + application.name}
                   className="flex items-center gap-2 relative bg-primary focus:bg-primary-accent hover:bg-primary-accent rounded py-2 px-5 text-sm cursor-pointer w-fit text-white mx-auto"
                 >
@@ -353,6 +367,8 @@ export function Send({ application }: { application: Application }) {
                   )}
                 </PDFDownloadLink>
               </div>
+            ) : (
+              <p></p>
             )}
           </DialogPanel>
         </div>

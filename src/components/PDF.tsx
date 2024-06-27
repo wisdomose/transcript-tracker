@@ -1,4 +1,5 @@
 "use client";
+import { SignageResponse } from "@/services/User";
 import { Application, Result } from "@/types";
 import {
   Document,
@@ -78,7 +79,13 @@ const gradingSystem = [
   },
 ];
 
-export default function PDF({ application }: { application: Application }) {
+export default function PDF({
+  application,
+  signage,
+}: {
+  application: Application;
+  signage?: SignageResponse;
+}) {
   // calculate result
 
   let results: Result[] = [];
@@ -532,9 +539,10 @@ export default function PDF({ application }: { application: Application }) {
             </View>
           </View>
 
-          {/* sinage */}
+          {/* signage */}
           <View
             style={{
+              position: "relative",
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
@@ -567,9 +575,11 @@ export default function PDF({ application }: { application: Application }) {
                     style={{
                       ...styles.p,
                       alignSelf: "center",
+                      textTransform: "uppercase",
+                      fontWeight: !!signage ? "bold" : "normal",
                     }}
                   >
-                    (NAME OF REGISTRA)
+                    {signage?.registra ?? "Name of registra"}
                   </Text>
                 </View>
 
@@ -585,7 +595,7 @@ export default function PDF({ application }: { application: Application }) {
                 </Text>
               </View>
             </View>
-            <View style={{ width: "70%", paddingTop: 16 }}>
+            <View style={{ width: "70%", paddingTop: !!signage ? 10 : 16 }}>
               <View
                 style={{
                   ...styles.p,
@@ -593,7 +603,20 @@ export default function PDF({ application }: { application: Application }) {
                   borderBottom: "0.5px solid black",
                   borderStyle: "dashed",
                 }}
-              ></View>
+              >
+                {signage && (
+                  <Text
+                    style={{
+                      ...styles.p,
+                      textAlign: "center",
+                      ...styles.bold,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {signage.recordOfficer}
+                  </Text>
+                )}
+              </View>
               <Text style={{ ...styles.p, textAlign: "center", marginTop: 2 }}>
                 (NAME OF EXAMS AND RECORDS)
               </Text>
@@ -601,6 +624,19 @@ export default function PDF({ application }: { application: Application }) {
                 EXAMS AND RECORD
               </Text>
             </View>
+
+            {signage && (
+              <Image
+                src="/approved.png"
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: "100%",
+                  width: 100,
+                  height: 100,
+                }}
+              />
+            )}
           </View>
         </Page>
       </Document>

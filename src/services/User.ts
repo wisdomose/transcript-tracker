@@ -13,6 +13,7 @@ import { getStorage } from "firebase/storage";
 
 export type LoginResponse = {};
 export type SignUpResponse = Student;
+export type SignageResponse = { registra: string; recordOfficer: string }
 
 export default class UserService {
   auth;
@@ -29,6 +30,7 @@ export default class UserService {
     this.login = this.login.bind(this);
     this.profile = this.profile.bind(this);
     this.signUp = this.signUp.bind(this);
+    this.signage = this.signage.bind(this);
   }
 
   // user, student and record officer
@@ -94,5 +96,40 @@ export default class UserService {
         reject(error.message);
       }
     });
+  }
+
+  async signage() {
+    return new Promise<SignageResponse>(
+      async (resolve, reject) => {
+        try {
+          if (!this.auth.currentUser)
+            throw new Error("You need to be logged in");
+          const registraQuery = query(
+            collection(this.db, COLLECTION.USER),
+            where("email", "==", "registra@aju.com")
+          );
+          const recordOfficerQuery = query(
+            collection(this.db, COLLECTION.USER),
+            where("email", "==", "recordofficer@aju.com")
+          );
+
+          const registraQuerySnapshot = await getDocs(registraQuery);
+          const recordOfficerQuerySnapshot = await getDocs(recordOfficerQuery);
+
+          let result = { registra: "", recordOfficer: "" };
+          if (!registraQuerySnapshot.empty) {
+            const doc = registraQuerySnapshot.docs[0];
+            result.registra = doc.data().displayName;
+          }
+          if (!recordOfficerQuerySnapshot.empty) {
+            const doc = recordOfficerQuerySnapshot.docs[0];
+            result.recordOfficer = doc.data().displayName;
+          }
+          resolve(result);
+        } catch (error: any) {
+          reject(error.message);
+        }
+      }
+    );
   }
 }
