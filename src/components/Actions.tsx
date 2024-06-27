@@ -59,10 +59,10 @@ export function Approve({ application }: { application: Application }) {
     );
   };
 
-  async function downloadURI(uri: Blob | null, name: string) {
+  async function downloadURI(uri: string | null, name: string) {
     if(!uri) return;
     const link = document.createElement("a");
-    link.href = await uri.text();
+    link.href = uri;
     link.download = name;
     link.click();
   }
@@ -164,7 +164,7 @@ export function Approve({ application }: { application: Application }) {
                           className="flex items-center gap-2 relative bg-primary focus:bg-primary-accent hover:bg-primary-accent rounded py-2 px-5 text-sm cursor-pointer w-fit text-white mx-auto"
                           onClick={() => {
                             downloadURI(
-                              params.blob,
+                              params.url,
                               application.track_no + "-" + application.name
                             );
                             setDownloaded(true);
